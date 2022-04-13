@@ -95,6 +95,7 @@ void Menu::drawMiscTab() {
                 ImGui::Text("Movement");
                 ImGui::Separator();
                 ImGui::Checkbox("Auto Hop", &CONFIGBOOL("Misc>Misc>Movement>Auto Hop"));
+                ImGui::Checkbox("Skating", &CONFIGBOOL("Misc>Misc>Movement>Skating"));
                 ImGui::Checkbox("Humanised Bhop", &CONFIGBOOL("Misc>Misc>Movement>Humanised Bhop"));
                 if (CONFIGBOOL("Misc>Misc>Movement>Humanised Bhop")) {
                     ImGui::Text("Bhop Hitchance");

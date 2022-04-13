@@ -34,6 +34,35 @@ void bhop(CUserCmd *cmd) {
     }
 }
 
+void skate(CUserCmd *cmd){
+    if (CONFIGBOOL("Misc>Misc>Movement>Skating")) {
+    static int inForward  = 8;
+    static int inBack     = 16;
+    static int inMoveLeft = 512;
+    static int inMoveRight = 1024;
+
+    static int MOVETYPE_NOCLIP = 8;
+    static int MOVETYPE_LADDER = 9;
+        if(Globals::localPlayer->deadflag()) return;
+        if(Globals::localPlayer->moveType() == MOVETYPE_LADDER || Globals::localPlayer->moveType() == MOVETYPE_NOCLIP) return;
+
+        cmd->buttons &= ~inBack;
+        cmd->buttons &= ~inForward;
+        cmd->buttons &= ~inMoveLeft;
+        cmd->buttons &= ~inMoveRight;
+
+        if(cmd->forwardmove > 0)
+            cmd->buttons |= inBack;
+        else if(cmd->forwardmove < 0)
+            cmd->buttons |=  inForward;
+
+        if(cmd->sidemove > 0)
+            cmd->buttons |= inMoveLeft;
+        else if(cmd->sidemove < 0)
+            cmd->buttons |= inMoveRight;
+    }
+}
+
 void edgeJump(CUserCmd *cmd) {
     if (CONFIGBOOL("Misc>Misc>Movement>Edge Jump") &&
         Menu::CustomWidgets::isKeyDown(CONFIGINT("Misc>Misc>Movement>Edge Jump Key")) &&
@@ -78,6 +107,7 @@ void Features::Movement::prePredCreateMove(CUserCmd *cmd) {
     velBackup = Globals::localPlayer->velocity();
 
     bhop(cmd);
+    skate(cmd);
 
     if (shouldEdgebug && shouldDuckNext)
         cmd->buttons |= IN_DUCK;
