@@ -127,6 +127,10 @@ void Menu::onSwapWindow(SDL_Window* window) {
         FULLUPDATE();
     }
 
+    if (ImGui::GetIO().KeyAlt && ImGui::IsKeyPressed(SDL_SCANCODE_Z)) {
+        CONFIGBOOL("Visuals>World>World>Third Person") = !CONFIGBOOL("Visuals>World>World>Third Person");
+    }
+
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
