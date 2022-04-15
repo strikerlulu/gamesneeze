@@ -116,6 +116,17 @@ void Menu::onSwapWindow(SDL_Window* window) {
         Menu::open = !Menu::open;
     }
 
+    // faster way to switch config(its better to turn it off than acting in somecases)
+    if (ImGui::GetIO().KeyAlt && ImGui::IsKeyPressed(SDL_SCANCODE_X)) {
+        if(strcmp(Config::configFileName,"gamesneeze.cfg")==0){
+            strcpy(Config::configFileName, "nowall.cfg");
+        }else{
+            strcpy(Config::configFileName, "gamesneeze.cfg");
+        }
+        Config::load();
+        FULLUPDATE();
+    }
+
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
