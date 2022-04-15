@@ -111,7 +111,7 @@ void Menu::onSwapWindow(SDL_Window* window) {
     }
 
 
-    if (ImGui::IsKeyPressed(SDL_SCANCODE_INSERT, false)) {
+    if (ImGui::GetIO().KeyAlt && ImGui::IsKeyPressed(SDL_SCANCODE_R)) {
         Config::reloadCfgList();
         Menu::open = !Menu::open;
     }
