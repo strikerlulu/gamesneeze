@@ -1,6 +1,7 @@
 #include "menu.hpp"
 #include "imgui/imgui.h"
 #include "roboto.hpp"
+#include "wqy.hpp"
 
 void style() {
     ImVec4* colors = ImGui::GetStyle().Colors;
@@ -79,7 +80,21 @@ void Menu::onSwapWindow(SDL_Window* window) {
         ImGui_ImplOpenGL3_Init("#version 100");
         ImGui_ImplSDL2_InitForOpenGL(window, nullptr);
         style();
-        ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(Roboto_compressed_data, Roboto_compressed_size, 14.f);
+        /* ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(Roboto_compressed_data, Roboto_compressed_size, 14.f); */
+        // Chinese/Japanese font fix
+        ImFont* font = ImGui::GetIO().Fonts->AddFontDefault();
+        ImFontConfig cfg;
+        cfg.MergeMode = true;
+        cfg.OversampleH = 1;
+        static ImFontGlyphRangesBuilder range;
+        range.Clear();
+        static ImVector<ImWchar> gr;
+        gr.clear();
+        range.AddRanges(ImGui::GetIO().Fonts->GetGlyphRangesChineseFull());
+        range.AddRanges(ImGui::GetIO().Fonts->GetGlyphRangesJapanese());
+        range.BuildRanges(&gr);
+        ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(wqy_compressed_data, wqy_compressed_size, 14.f,&cfg,gr.Data);
+        ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(Roboto_compressed_data, Roboto_compressed_size, 14.f,&cfg);
         initialised = true;
     }
 
