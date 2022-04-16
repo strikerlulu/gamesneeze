@@ -64,6 +64,15 @@ Monero:
 
 ```sudo apt install -y libsdl2-dev cmake git gcc-10 g++-10 gdb clang```
 
+### NixOS
+
+To install
+```
+nix-env -f https://github.com/strikerlulu/gamesneeze/archive/4f2e281bb95998a2516ad99e89ffb868be202111.tar.gz -i game-mode
+```
+
+or clone the repo, ```nix-build``` then use `./result/bin/toolbox.sh`
+
 ### Arch / Manjaro required packages:
 
 ```sudo pacman -S --needed base-devel git cmake gdb sdl2 clang```

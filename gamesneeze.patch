@@ -1,0 +1,82 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 53e69ae..842eee8 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -6,20 +6,8 @@ set(CMAKE_CXX_STANDARD 20)
+ set(CMAKE_C_FLAGS_DEBUG "-Wall -Wextra -O3 -march=core2 -mtune=native -fvisibility=hidden -flto -ggdb -DDEBUG")
+ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -std=c++2a -Wall -Wextra")
+ 
+-string(TOLOWER $ENV{USE_CLANG} USE_CLANG)
+-if(USE_CLANG STREQUAL "true")
+-  set(CMAKE_C_COMPILER "/usr/bin/clang")
+-  set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+-
+-  set(CMAKE_C_FLAGS_RELEASE "-W -Wall -Wextra -O3 -march=native -mtune=native -fvisibility=hidden -flto -Wl,--strip-all")
+-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fno-rtti -std=c++2a -Wall -Wextra")
+-else()
+-  set(CMAKE_C_COMPILER "/usr/bin/gcc")
+-  set(CMAKE_CXX_COMPILER "/usr/bin/g++")
+-
+-  set(CMAKE_C_FLAGS_RELEASE "-W -Wall -Wextra -O3 -march=native -mtune=native -s -fvisibility=hidden -flto -fwhole-program -Wl,--strip-all")
+-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} --no-gnu-unique -fno-rtti -std=c++2a")
+-endif()
++set(CMAKE_C_FLAGS_RELEASE "-W -Wall -Wextra -O3 -march=native -mtune=native -s -fvisibility=hidden -flto -fwhole-program -Wl,--strip-all")
++set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} --no-gnu-unique -fno-rtti -std=c++2a")
+ 
+ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
+ 
+diff --git a/toolbox.sh b/toolbox.sh
+index 019a67f..a8cdec1 100755
+--- a/toolbox.sh
++++ b/toolbox.sh
+@@ -1,7 +1,8 @@
+-#!/bin/bash
++#!/usr/bin/env bash
+ 
+-gdb="$(dirname "$0")/gdb" # For using a gdb build such as the cathook one (The one included)
++gdb="sudo gdb" # it doesn't seem to work without sudo
+ libname="libgamemodeauto.so.0" # Pretend to be gamemode, change this to another lib that may be in /maps (if already using real gamemode, I'd suggest using libMangoHud.so)
++libpath="REPLACE_WITH_LIBPATH"
+ csgo_pid=$(pidof csgo_linux64)
+ 
+ # Set to true to compile with clang. (if changing to true, make sure to delete the build directory from gcc)
+@@ -22,7 +23,7 @@ function unload {
+         $gdb -n -q -batch -ex "attach $csgo_pid" \
+             -ex "set \$dlopen = (void*(*)(char*, int)) dlopen" \
+             -ex "set \$dlclose = (int(*)(void*)) dlclose" \
+-            -ex "set \$library = \$dlopen(\"/usr/lib/$libname\", 6)" \
++            -ex "set \$library = \$dlopen(\"$libpath/$libname\", 6)" \
+             -ex "call \$dlclose(\$library)" \
+             -ex "call \$dlclose(\$library)" \
+             -ex "detach" \
+@@ -34,13 +35,12 @@ function unload {
+ function load {
+     echo "Loading cheat..."
+     echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope > /dev/null
+-    sudo cp build/libgamesneeze.so /usr/lib/$libname
+     gdbOut=$(
+       $gdb -n -q -batch \
+-      -ex "set auto-load safe-path /usr/lib/" \
++      -ex "set auto-load safe-path $libpath" \
+       -ex "attach $csgo_pid" \
+       -ex "set \$dlopen = (void*(*)(char*, int)) dlopen" \
+-      -ex "call \$dlopen(\"/usr/lib/$libname\", 1)" \
++      -ex "call \$dlopen(\"$libpath/$libname\", 1)" \
+       -ex "detach" \
+       -ex "quit" 2> /dev/null
+     )
+@@ -55,12 +55,11 @@ function load {
+ function load_debug {
+     echo "Loading cheat..."
+     echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
+-    sudo cp build/libgamesneeze.so /usr/lib/$libname
+     $gdb -n -q -batch \
+-        -ex "set auto-load safe-path /usr/lib:/usr/lib/" \
++        -ex "set auto-load safe-path $libpath:$libpath/" \
+         -ex "attach $csgo_pid" \
+         -ex "set \$dlopen = (void*(*)(char*, int)) dlopen" \
+-        -ex "call \$dlopen(\"/usr/lib/$libname\", 1)" \
++        -ex "call \$dlopen(\"$libpath/$libname\", 1)" \
+         -ex "detach" \
+         -ex "quit"
+     $gdb -p "$csgo_pid"
