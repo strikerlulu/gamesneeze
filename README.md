@@ -68,7 +68,7 @@ Monero:
 
 To install
 ```
-nix-env -f https://github.com/strikerlulu/gamesneeze/archive/4f2e281bb95998a2516ad99e89ffb868be202111.tar.gz -i game-mode
+nix-env -f https://github.com/strikerlulu/gamesneeze/archive/6bc68429860e20afcec5fb6cd77166de74080b7f.tar.gz -i game-mode
 ```
 
 or clone the repo, ```nix-build``` then use `./result/bin/toolbox.sh`

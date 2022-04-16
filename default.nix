@@ -6,8 +6,8 @@ stdenv.mkDerivation {
   src = pkgs.fetchFromGitHub {
     repo = "gamesneeze";
     owner = "strikerlulu";
-    rev = "4f2e281bb95998a2516ad99e89ffb868be202111";
-    sha256 = "sha256-X4FPMS5afTu24zvVgOaADYxJbTPH4li1Rf7XYRwNBI0=";
+    rev = "6bc68429860e20afcec5fb6cd77166de74080b7f";
+    sha256 = "sha256-LeKCvJEGknvMUHtJKmtra0dALwv+CLxo3O4XqnBVmJA=";
   };
   nativeBuildInputs = with pkgs; [ cmake gcc ];
   buildInputs = with pkgs; [ SDL2 ];
